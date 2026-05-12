@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<meta name="theme-color" content="#f5e6e8"/>
+<title>Pilates Mare</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,serif;background:linear-gradient(135deg,#fdf6f0,#f5e6e8,#e8f0f5);min-height:100vh;color:#3a2a3a}
+#loading{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:12px;color:#9a7080}
+.hdr{background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(200,180,180,0.3);padding:12px 20px;position:sticky;top:0;z-index:100;display:none;align-items:center;justify-content:space-between}
+.wrap{max-width:600px;margin:0 auto;padding:16px;display:none}
+.card{background:rgba(255,255,255,0.82);border:1px solid rgba(200,180,180,0.2);border-radius:16px;padding:16px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.bigbtn{border:none;border-radius:18px;padding:24px 16px;cursor:pointer;text-align:left;color:white;width:100%;transition:transform 0.15s;font-family:Georgia,serif}
+.bigbtn:active{transform:scale(0.97)}
+input,select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(200,180,180,0.3);background:rgba(255,255,255,0.9);font-size:14px;font-family:Georgia,serif;color:#5a3a4a;outline:none;margin-bottom:8px}
+label{display:block;font-size:11px;color:#9a7080;letter-spacing:1px;margin-bottom:5px;margin-top:6px}
+.pbtn{width:100%;padding:14px;color:white;border:none;border-radius:14px;font-size:15px;font-family:Georgia,serif;cursor:pointer;margin-top:6px}
+.bbtn{background:none;border:none;color:#9a7080;cursor:pointer;font-size:13px;margin-bottom:16px;padding:0;font-family:Georgia,serif}
+.badge{padding:3px 10px;border-radius:16px;font-size:11px}
+.bg{background:#7aab8a;color:white}
+.bo{background:rgba(122,171,138,0.15);color:#5a8a6a;border:1px solid rgba(122,171,138,0.3)}
+.br{background:rgba(200,100,100,0.1);color:#c06060;border:1px solid rgba(200,100,100,0.2)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tab{padding:6px 12px;border-radius:16px;border:1px solid rgba(200,180,180,0.3);font-size:12px;cursor:pointer;font-family:Georgia,serif;background:rgba(255,255,255,0.7);color:#7a5a6a}
+.tab.on{color:white}
+.notif{position:fixed;top:70px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:24px;color:white;font-size:13px;font-family:Georgia,serif;z-index:999;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.15);display:none}
+.row{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.82);border-radius:12px;padding:10px 12px;border:1px solid rgba(200,180,180,0.2);margin-bottom:6px}
+.itag{padding:3px 10px;border-radius:16px;font-size:11px;cursor:pointer;font-family:Georgia,serif;margin:2px;border:1px solid rgba(200,180,180,0.3);background:rgba(240,240,240,0.5);color:#9a8090;display:inline-block}
+.itag.on{background:rgba(212,128,154,0.15);color:#b0506a;border-color:#d4809a}
+.clsbtn{width:100%;padding:12px 14px;margin-bottom:7px;border-radius:12px;border:1px solid rgba(200,180,180,0.3);background:rgba(255,255,255,0.8);color:#5a3a4a;cursor:pointer;text-align:left;font-family:Georgia,serif;display:flex;justify-content:space-between;align-items:center}
+.clsbtn.sel{border:2px solid #d4809a;background:rgba(212,128,154,0.1)}
+.clsbtn.dis{background:#f0f0f0;color:#aaa;cursor:default}
+.jbtn{width:100%;padding:14px;margin-bottom:8px;border-radius:12px;border:1px solid rgba(180,200,220,0.4);background:rgba(255,255,255,0.8);cursor:pointer;text-align:left;font-family:Georgia,serif;display:flex;justify-content:space-between;align-items:center}
+.jbtn.sel{border:2px solid #8ab8d8;background:rgba(138,184,216,0.1)}
+.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.mbox{background:#fff;border-radius:24px 24px 0 0;padding:24px;width:100%;max-width:600px;max-height:88vh;overflow-y:auto}
+.smb{padding:7px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-family:Georgia,serif;border:none;color:white}
+</style>
+</head>
+<body>
+<div id="loading">
+  <img src="data:image/png;base64,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" style="width:80px;height:80px;object-fit:contain"/>
+  <div style="font-size:18px;color:#7a4a5a;font-weight:bold">Pilates Mare</div>
+  <div style="font-size:13px;color:#b0a0a8">Cargando...</div>
+</div>
+
+<div class="hdr" id="hdr">
+  <div style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="showView('home')">
+    <img src="data:image/png;base64,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" style="width:34px;height:34px;object-fit:contain"/>
+    <div>
+      <div style="font-size:17px;font-weight:bold;color:#7a4a5a">Pilates Mare</div>
+      <div style="font-size:10px;color:#a07080;letter-spacing:2px">GESTIÓN DE CLASES</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span id="sav" style="font-size:11px;color:#9a7080;display:none">💾</span>
+    <button id="admbtn" onclick="askAdminPass()" style="background:none;border:1px solid #c4a0b0;color:#7a4a5a;padding:6px 12px;border-radius:16px;font-size:12px;cursor:pointer;font-family:Georgia,serif">⚙ Admin</button>
+  </div>
+</div>
+
+<div class="wrap" id="wrap"></div>
+<div class="notif" id="notif"></div>
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="mbox" id="mbox"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyCSyOrStnHfrV3205L1SjhkNBxI37dFCvc",
+  authDomain:"pilates-mare-77239.firebaseapp.com",
+  databaseURL:"https://pilates-mare-77239-default-rtdb.firebaseio.com",
+  projectId:"pilates-mare-77239",
+  storageBucket:"pilates-mare-77239.firebasestorage.app",
+  messagingSenderId:"977368688539",
+  appId:"1:977368688539:web:acaa904aef40dd1d71233e"
+});
+const db=firebase.database();
+
+const ADMIN_PASS="Pilates2026mare";
+const TEACHERS={"Anabella":"5493795310020","Maia":"5493873300222","Rocío":"5493794049367","Antonela":"5493794899757","Iara":"5493794401004"};
+const DAY_COLORS={"Lunes":"#d4a5a5","Martes":"#a5b4d4","Miércoles":"#a5d4b4","Jueves":"#d4cca5","Viernes":"#c4a5d4","Sábado":"#d4b4a5"};
+const ALL_DAYS=["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+const DC=[
+  {id:1,day:"Lunes",time:"08:00",teacher:"Anabella",spots:10,enrolled:[]},
+  {id:2,day:"Lunes",time:"09:00",teacher:"Anabella",spots:10,enrolled:[]},
+  {id:3,day:"Lunes",time:"10:00",teacher:"Anabella",spots:10,enrolled:[]},
+  {id:4,day:"Lunes",time:"11:00",teacher:"Anabella",spots:10,enrolled:[]},
+  {id:5,day:"Lunes",time:"14:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:6,day:"Lunes",time:"15:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:7,day:"Lunes",time:"16:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:8,day:"Lunes",time:"17:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:9,day:"Lunes",time:"18:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:10,day:"Lunes",time:"19:00",teacher:"Iara",spots:10,enrolled:[]},
+  {id:11,day:"Lunes",time:"20:00",teacher:"Iara",spots:10,enrolled:[]},
+  {id:12,day:"Martes",time:"08:00",teacher:"Maia",spots:10,enrolled:[]},
+  {id:13,day:"Martes",time:"09:00",teacher:"Maia",spots:10,enrolled:[]},
+  {id:14,day:"Martes",time:"10:00",teacher:"Rocío",spots:10,enrolled:[]},
+  {id:15,day:"Martes",time:"11:00",teacher:"Rocío",spots:10,enrolled:[]},
+  {id:16,day:"Martes",time:"14:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:17,day:"Martes",time:"15:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:18,day:"Martes",time:"16:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:19,day:"Martes",time:"17:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:20,day:"Martes",time:"18:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:21,day:"Martes",time:"19:00",teacher:"Iara",spots:10,enrolled:[]},
+  {id:22,day:"Martes",time:"20:00",teacher:"Iara",spots:10,enrolled:[]},
+  {id:23,day:"Miércoles",time:"08:00",teacher:"Anabella",spots:10,enrolled:[]},
+  {id:24,day:"Miércoles",time:"09:00",teacher:"Anabella",spots:10,enrolled:[]},
+  {id:25,day:"Miércoles",time:"10:00",teacher:"Anabella",spots:10,enrolled:[]},
+  {id:26,day:"Miércoles",time:"11:00",teacher:"Anabella",spots:10,enrolled:[]},
+  {id:27,day:"Miércoles",time:"14:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:28,day:"Miércoles",time:"15:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:29,day:"Miércoles",time:"16:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:30,day:"Miércoles",time:"17:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:31,day:"Miércoles",time:"18:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:32,day:"Miércoles",time:"19:00",teacher:"Iara",spots:10,enrolled:[]},
+  {id:33,day:"Miércoles",time:"20:00",teacher:"Iara",spots:10,enrolled:[]},
+  {id:34,day:"Jueves",time:"08:00",teacher:"Maia",spots:10,enrolled:[]},
+  {id:35,day:"Jueves",time:"09:00",teacher:"Maia",spots:10,enrolled:[]},
+  {id:36,day:"Jueves",time:"10:00",teacher:"Rocío",spots:10,enrolled:[]},
+  {id:37,day:"Jueves",time:"11:00",teacher:"Rocío",spots:10,enrolled:[]},
+  {id:38,day:"Jueves",time:"14:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:39,day:"Jueves",time:"15:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:40,day:"Jueves",time:"16:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:41,day:"Jueves",time:"17:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:42,day:"Jueves",time:"18:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:43,day:"Jueves",time:"19:00",teacher:"Iara",spots:10,enrolled:[]},
+  {id:44,day:"Jueves",time:"20:00",teacher:"Iara",spots:10,enrolled:[]},
+  {id:45,day:"Viernes",time:"08:00",teacher:"Anabella",spots:10,enrolled:[]},
+  {id:46,day:"Viernes",time:"09:00",teacher:"Anabella",spots:10,enrolled:[]},
+  {id:47,day:"Viernes",time:"10:00",teacher:"Anabella",spots:10,enrolled:[]},
+  {id:48,day:"Viernes",time:"11:00",teacher:"Anabella",spots:10,enrolled:[]},
+  {id:49,day:"Viernes",time:"14:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:50,day:"Viernes",time:"15:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:51,day:"Viernes",time:"16:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:52,day:"Viernes",time:"17:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:53,day:"Viernes",time:"18:00",teacher:"Antonela",spots:10,enrolled:[]},
+  {id:54,day:"Viernes",time:"19:00",teacher:"Iara",spots:10,enrolled:[]},
+  {id:55,day:"Viernes",time:"20:00",teacher:"Iara",spots:10,enrolled:[]}
+];
+const DS=["Adara Galicia","Agostina Barreto","Agostina Rossi","Agustina Loza","Agustina Robledo","Agustina Simonetto","Aima Martinez","Alejandra Aguirre","Alejandra González","Alicia Alegre","Alicia Amarilla","Alicia Martinez","Aldo Fedrigo","Ana María","Ana María Olazarri","Andrea Alonso","Andrea Galarza","Andrea Maidana","Andrea Martelotte","Andrea Ramírez","Andrea Zafaroni","Ania Ferrero","Antonella Montanaro","Aranzazu Lagomarsino","Araceli Arrua","Ariana Bernachea","Ariana Giménez","Aurora Arata","Azucena Panozzo","Azul Alonzo","Barbara Olivera","Belen Sánchez","Bettina Saldaqui","Bibiana Bambula","Bibiana Billinger","Camila Aguirre","Camila D'amigo","Camila Fiori","Camila Lomonaco","Camila Pasini","Carmen Cuenca","Carla Grezca","Cecilia Ávila","Cecilia Folguera","Cecilia Morales","Celeste Gimenez","Charo","Cinthia Rolón","Cintia Rodríguez","Clarisa Yunes","Claudia Guastavino","Claudia Marini","Claudia Vicente","Claudio Queirel","Dahiana Torres","Daiana Bunchich","Daniela Amud","Daniela Díaz","Dora Lapuente","Dulce María Ortiz","Eliana Benasulin","Elizabeth","Emilia Costaguta","Emilse García","Esther Branca","Espinoza María","Eugenia Fedrigo","Eugenia Ferrin","Evangelina Acosta","Felicitas Alonso","Fernanda Alegre","Fernanda Flores","Flavia Consorti","Florencia Correa","Florencia Giménez","Florencia Pannunzio","Florencia Rodríguez","Fransisca Figueroa","Gabriel Provasi","Gabriela Schneider","Gloria Sánchez","Graciela Álvarez","Graciela Pérez","Griselda da Silva","Guada Perrota","Guillermina Gómez","Guillermina Sandrigo","Guillermo Fiat","Hilda Simoncioni","Iara Ramírez","Jerónimo Búfalo","Julia Grosso","Juliana Molero","Julieta Quintana","Karina Barrios","Karina Durand","Karla Monzon","Kelly Azvolinsky","Laura Grand","Laura Gómez","Laura Lovey","Laura Zabala","Leila Lemos","Lorena","Lorena Portillo","Lucia Pereyra","Lucia Posman","Ludmila Saulichi","Luján Gómez","Luz Gomez","Mabel Miranda","Macarena Jurado","Madelein Rach","Madeleine Gallardo","Maia","Manuela Fernández","Marcela Cendolla","Mariana Mariño","Mariangeles Ramírez","Mariela Diguini","Mariela Fernández","Marina Mariño","Marisol Casabonne","Marita Estigarribia","Martha Castro","Martina Hija Mari","María Ferreira","María José Recalde","María Rosa Zeniquel","María Slavin","Mercedes Delgado","Mercedes Paredes","Micaela Aguilera","Milagros Malgor","Milagros Ramírez","Mileyna Ledesma","Mirta Esmendi","Mirtha Lagraña","Mónica Aguilar","Mónica Noir","Nancy González","Nara Velardo","Natalia Leisteimi","Natalia Romero","Nayla Sosa","Noelia Gómez","Noelia Saucedo","Noelia Sarabia","Noel San Felice","Ornella Lupi","Oriana Lupi","Orue Patricia","Pablo Martinez","Paola Olivera","Patricia Maidana","Patricia Poritu","Patricia Wetzel","Paula Damico","Paulina","Pia","Raquel Ascoto","Rocío Medina","Rocío Torres","Romina Miño","Samara Silva","Santiago Arregin","Sara Perrens","Silvia Alegre","Silvia Coceres","Silvia Escobar","Silvia Veron","Silvana Picchio","Silvana Rolón","Sofia Alsina","Sofía Ramírez","Solange Cendoya","Soledad Balado","Susana Ricagno","Susana Silva","Susana Surt","Tamara Gómez","Valentina Gómez","Valentina Miranda","Valeria Rolón","Vanesa Morales","Verónica Fernández","Victoria Velázquez","Virginia Navarro","Viviana Benetti","Viviana Soto","Yésica Gomez","Yudith Tauber","Zunilda"].map(n=>({name:n,phone:'',freq:'',time:'',active:true,birthdate:'',dni:'',profession:'',emergency:'',notes:''}));
+
+// State
+let classes=[],students=[],absences=[],payments=[];
+let view='home',schedDay='Lunes',selClass=null,selStudent='',joinSt='',joinName='',adminTab='alumnas';
+let adminUnlocked=false;
+
+// Firebase
+function sav(on){document.getElementById('sav').style.display=on?'inline':'none';}
+function saveC(){sav(true);db.ref('v3/classes').set(classes).then(()=>sav(false));}
+function saveS(){sav(true);db.ref('v3/students').set(students).then(()=>sav(false));}
+function saveA(){sav(true);db.ref('v3/absences').set(absences).then(()=>sav(false));}
+function saveP(){sav(true);db.ref('v3/payments').set(payments).then(()=>sav(false));}
+function fix(v,d){
+  if(!v) return d||[];
+  if(Array.isArray(v)) return v.filter(Boolean);
+  return Object.values(v).filter(Boolean);
+}
+
+Promise.all([
+  db.ref('v3/classes').once('value').then(s=>{
+    const v=fix(s.val(),DC);
+    classes=v.map(c=>({...c,enrolled:Array.isArray(c.enrolled)?c.enrolled:[]}));
+  }),
+  db.ref('v3/students').once('value').then(s=>{students=fix(s.val(),DS);}),
+  db.ref('v3/absences').once('value').then(s=>{absences=fix(s.val(),[]);}),
+  db.ref('v3/payments').once('value').then(s=>{payments=fix(s.val(),[]);})
+]).then(()=>{
+  document.getElementById('loading').style.display='none';
+  document.getElementById('hdr').style.display='flex';
+  document.getElementById('wrap').style.display='block';
+  render();
+}).catch(e=>{
+  document.getElementById('loading').innerHTML='<div style="color:#c06060;text-align:center;padding:32px"><div style="font-size:28px;margin-bottom:12px">⚠️</div><div>'+e.message+'</div><button onclick="location.reload()" style="margin-top:16px;background:#d4809a;border:none;color:white;padding:10px 24px;border-radius:20px;cursor:pointer;font-family:Georgia,serif">Reintentar</button></div>';
+});
+
+// Helpers
+function absFor(id){return absences.filter(a=>a.classId==id).map(a=>a.studentName);}
+function free(c){return absFor(c.id).length+(c.spots-c.enrolled.length);}
+function notif(msg,err){
+  const n=document.getElementById('notif');
+  n.textContent=msg;n.style.background=err?'#e57373':'#7aab8a';n.style.display='block';
+  setTimeout(()=>n.style.display='none',3000);
+}
+function openWA(phone,msg){window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(msg),'_blank');}
+function showView(v){
+  view=v;selClass=null;selStudent='';joinSt='';joinName='';
+  document.getElementById('admbtn').style.cssText=v==='admin'?'background:#d4809a;color:white;border:none;padding:6px 12px;border-radius:16px;font-size:12px;cursor:pointer;font-family:Georgia,serif':'background:none;border:1px solid #c4a0b0;color:#7a4a5a;padding:6px 12px;border-radius:16px;font-size:12px;cursor:pointer;font-family:Georgia,serif';
+  render();
+}
+function closeModal(){document.getElementById('modal').style.display='none';}
+function showModal(html){document.getElementById('mbox').innerHTML=html;document.getElementById('modal').style.display='flex';}
+
+// Admin password
+function askAdminPass(){
+  if(adminUnlocked){showView('admin');return;}
+  showModal('<div style="font-size:16px;font-weight:bold;color:#5a3a4a;margin-bottom:16px">🔒 Panel de administración</div><label>Contraseña</label><input type="password" id="pass-inp" placeholder="Contraseña..." onkeydown="if(event.key===\'Enter\')checkPass()"><div id="pass-err" style="color:#e57373;font-size:12px;margin-bottom:8px;display:none">Contraseña incorrecta</div><button onclick="checkPass()" class="pbtn" style="background:linear-gradient(135deg,#d4809a,#e0a0b5)">Entrar</button><button onclick="closeModal()" style="width:100%;padding:10px;background:none;border:none;color:#9a7080;cursor:pointer;font-family:Georgia,serif;margin-top:6px">Cancelar</button>');
+  setTimeout(()=>document.getElementById('pass-inp')&&document.getElementById('pass-inp').focus(),100);
+}
+function checkPass(){
+  const v=document.getElementById('pass-inp').value;
+  if(v===ADMIN_PASS){adminUnlocked=true;closeModal();showView('admin');}
+  else{document.getElementById('pass-err').style.display='block';}
+}
+
+// Payment helpers
+function getPay(name){return payments.find(p=>p.name===name);}
+function payStatus(name){
+  const p=getPay(name);
+  if(!p||!p.dueDate) return 'none';
+  const d=Math.ceil((new Date(p.dueDate)-Date.now())/(864e5));
+  if(d<0) return 'overdue';
+  if(d<=5) return 'warning';
+  return 'ok';
+}
+function daysLeft(name){
+  const p=getPay(name);
+  if(!p||!p.dueDate) return null;
+  return Math.ceil((new Date(p.dueDate)-Date.now())/(864e5));
+}
+function openRegisterPayment(idx){
+  const s=students[idx];
+  const today=new Date().toISOString().split('T')[0];
+  const due30=new Date();due30.setDate(due30.getDate()+30);
+  const due30s=due30.toISOString().split('T')[0];
+  const existing=getPay(s.name);
+  showModal(`
+    <div style="font-size:16px;font-weight:bold;color:#5a3a4a;margin-bottom:4px">💰 Registrar pago</div>
+    <div style="font-size:14px;color:#9a7080;margin-bottom:16px">${s.name}</div>
+    <label>Fecha de pago</label>
+    <input type="date" id="m-paid" value="${existing?existing.paidDate:today}">
+    <label>Fecha de vencimiento</label>
+    <input type="date" id="m-due" value="${existing?existing.dueDate:due30s}">
+    <button onclick="confirmPay(${idx})" class="pbtn" style="background:linear-gradient(135deg,#7aab8a,#5a9a7a);margin-top:8px">✓ Confirmar pago</button>
+    <button onclick="closeModal()" style="width:100%;padding:10px;background:none;border:none;color:#9a7080;cursor:pointer;font-family:Georgia,serif;margin-top:4px">Cancelar</button>
+  `);
+}
+function confirmPay(idx){
+  const paid=document.getElementById('m-paid').value;
+  const due=document.getElementById('m-due').value;
+  if(!paid||!due) return;
+  payments=payments.filter(p=>p.name!==students[idx].name);
+  payments.push({name:students[idx].name,paidDate:paid,dueDate:due});
+  saveP();closeModal();notif('✓ Pago registrado para '+students[idx].name);render();
+}
+function sendDebt(idx){
+  const s=students[idx];
+  const p=getPay(s.name);
+  const msg='🌸 *Pilates Mare*\n\nHola '+s.name+'! 😊 Te recordamos que tenés el pago del mes pendiente.'+(p&&p.dueDate?'\n\nVencimiento: '+p.dueDate:'')+'\n\nCualquier consulta escribinos. ¡Gracias! 🙏';
+  if(s.phone) openWA(s.phone,msg);
+  else window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+// Student helpers
+function enroll(name,freq,time){
+  const days=freq==='3'?['Lunes','Miércoles','Viernes']:['Martes','Jueves'];
+  classes=classes.map(c=>{
+    if(days.includes(c.day)&&c.time===time&&!c.enrolled.includes(name))
+      return{...c,enrolled:[...c.enrolled,name]};
+    return c;
+  });
+}
+function unenroll(name){
+  classes=classes.map(c=>({...c,enrolled:c.enrolled.filter(e=>e!==name)}));
+}
+function openEditSt(idx){
+  const s=idx===-1?{name:'',phone:'',freq:'',time:'',active:true,birthdate:'',dni:'',profession:'',emergency:'',notes:''}:students[idx];
+  const times=[...new Set(classes.map(c=>c.time))].sort();
+  const existingPay=getPay(s.name);
+  const today=new Date().toISOString().split('T')[0];
+  showModal(`
+    <div style="font-size:16px;font-weight:bold;color:#5a3a4a;margin-bottom:4px">${idx===-1?'➕ Nueva alumna':'✏️ Editar alumna'}</div>
+    ${idx>=0&&!s.active?'<div style="background:rgba(200,100,100,0.1);color:#c06060;border-radius:8px;padding:6px 10px;font-size:12px;margin-bottom:12px">⚠️ Alumna dada de baja</div>':''}
+    
+    <div style="font-size:12px;color:#9a7080;letter-spacing:1px;margin:12px 0 8px;font-weight:bold">DATOS PERSONALES</div>
+    <label>Nombre completo</label>
+    <input id="e-name" value="${s.name}" placeholder="Nombre completo...">
+    <div style="display:flex;gap:8px">
+      <div style="flex:1"><label>Fecha de nacimiento</label><input type="date" id="e-birth" value="${s.birthdate||''}"></div>
+      <div style="flex:1"><label>DNI</label><input id="e-dni" value="${s.dni||''}" placeholder="DNI..."></div>
+    </div>
+    <label>Profesión</label>
+    <input id="e-prof" value="${s.profession||''}" placeholder="Profesión...">
+    <label>Celular (con código de país)</label>
+    <input id="e-phone" value="${s.phone||''}" placeholder="5493XXXXXXXXX" type="tel">
+    <label>Contacto de emergencia</label>
+    <input id="e-emerg" value="${s.emergency||''}" placeholder="Nombre y teléfono...">
+    <label>Observaciones</label>
+    <input id="e-notes" value="${s.notes||''}" placeholder="Lesiones, condiciones especiales...">
+
+    <div style="font-size:12px;color:#9a7080;letter-spacing:1px;margin:12px 0 8px;font-weight:bold">CLASES</div>
+    <div style="display:flex;gap:8px">
+      <div style="flex:1">
+        <label>Frecuencia semanal</label>
+        <select id="e-freq">
+          <option value="">Sin asignar</option>
+          <option value="3" ${s.freq==='3'?'selected':''}>3x — Lun/Mié/Vie</option>
+          <option value="2" ${s.freq==='2'?'selected':''}>2x — Mar/Jue</option>
+        </select>
+      </div>
+      <div style="flex:1">
+        <label>Horario fijo</label>
+        <select id="e-time">
+          <option value="">Sin asignar</option>
+          ${times.map(t=>'<option value="'+t+'" '+(s.time===t?'selected':'')+'>'+t+'hs</option>').join('')}
+        </select>
+      </div>
+    </div>
+
+    <div style="font-size:12px;color:#9a7080;letter-spacing:1px;margin:12px 0 8px;font-weight:bold">PAGO</div>
+    <label>Fecha de pago</label>
+    <input type="date" id="e-paid" value="${existingPay?existingPay.paidDate:today}" onchange="autoSetDue()">
+    <label>Vencimiento (se calcula automático)</label>
+    <input type="date" id="e-due" value="${existingPay?existingPay.dueDate:nextMonth(today)}">
+
+    <button onclick="saveSt(${idx})" class="pbtn" style="background:linear-gradient(135deg,#d4809a,#e0a0b5);margin-top:12px">Guardar ✓</button>
+    ${idx>=0?`
+    <button onclick="toggleBaja(${idx})" style="width:100%;padding:10px;background:none;border:1px solid ${s.active?'#ffb74d':'#7aab8a'};color:${s.active?'#e59040':'#5a8a6a'};cursor:pointer;font-family:Georgia,serif;border-radius:10px;margin-top:6px">
+      ${s.active?'⏸ Dar de baja (conservar datos)':'▶ Reactivar alumna'}
+    </button>
+    <button onclick="delSt(${idx})" style="width:100%;padding:10px;background:none;border:none;color:#e57373;cursor:pointer;font-family:Georgia,serif;margin-top:4px">🗑️ Eliminar permanentemente</button>`:''}
+    <button onclick="closeModal()" style="width:100%;padding:10px;background:none;border:none;color:#9a7080;cursor:pointer;font-family:Georgia,serif;margin-top:2px">Cancelar</button>
+  `);
+}
+function nextMonth(dateStr){
+  const d=new Date(dateStr);
+  d.setMonth(d.getMonth()+1);
+  return d.toISOString().split('T')[0];
+}
+function autoSetDue(){
+  const paid=document.getElementById('e-paid').value;
+  if(paid) document.getElementById('e-due').value=nextMonth(paid);
+}
+function toggleBaja(idx){
+  students[idx].active=!students[idx].active;
+  if(!students[idx].active) unenroll(students[idx].name);
+  saveS();saveC();closeModal();
+  notif(students[idx].active?'✓ Alumna reactivada':'Alumna dada de baja (datos conservados)');
+  render();
+}
+function saveSt(idx){
+  const name=document.getElementById('e-name').value.trim();
+  const phone=document.getElementById('e-phone').value.trim();
+  const freq=document.getElementById('e-freq').value;
+  const time=document.getElementById('e-time').value;
+  const birthdate=document.getElementById('e-birth')?document.getElementById('e-birth').value:'';
+  const dni=document.getElementById('e-dni')?document.getElementById('e-dni').value.trim():'';
+  const profession=document.getElementById('e-prof')?document.getElementById('e-prof').value.trim():'';
+  const emergency=document.getElementById('e-emerg')?document.getElementById('e-emerg').value.trim():'';
+  const notes=document.getElementById('e-notes')?document.getElementById('e-notes').value.trim():'';
+  const paidDate=document.getElementById('e-paid')?document.getElementById('e-paid').value:'';
+  const dueDate=document.getElementById('e-due')?document.getElementById('e-due').value:'';
+  if(!name) return notif('Escribí el nombre','error');
+  const isNew=idx===-1;
+  const oldName=isNew?null:students[idx].name;
+  const oldActive=isNew?true:(students[idx].active!==false);
+  if(isNew&&students.find(s=>s.name===name)) return notif('Esa alumna ya existe','error');
+  if(!isNew) unenroll(oldName);
+  if(freq&&time&&oldActive) enroll(name,freq,time);
+  const st={name,phone,freq,time,active:oldActive,birthdate,dni,profession,emergency,notes};
+  if(isNew) students=[...students,st].sort((a,b)=>a.name.localeCompare(b.name));
+  else{
+    students=students.map((s,i)=>i===idx?st:s);
+    absences=absences.map(a=>a.studentName===oldName?{...a,studentName:name}:a);
+    payments=payments.map(p=>p.name===oldName?{...p,name}:p);
+    saveA();
+  }
+  // Save payment if dates provided
+  if(paidDate&&dueDate){
+    payments=payments.filter(p=>p.name!==name);
+    payments.push({name,paidDate,dueDate});
+    saveP();
+  }
+  saveS();saveC();closeModal();
+  notif('✓ '+(isNew?'Alumna agregada':'Cambios guardados'));render();
+}
+function delSt(idx){
+  if(!confirm('¿Eliminar a '+students[idx].name+'?')) return;
+  const name=students[idx].name;
+  unenroll(name);
+  students=students.filter((_,i)=>i!==idx);
+  absences=absences.filter(a=>a.studentName!==name);
+  payments=payments.filter(p=>p.name!==name);
+  saveS();saveC();saveA();saveP();
+  closeModal();notif('Alumna eliminada');render();
+}
+
+// Class actions
+function toggleEnroll(cid,name){
+  classes=classes.map(c=>{
+    if(c.id!=cid) return c;
+    const e=c.enrolled.includes(name)?c.enrolled.filter(x=>x!==name):[...c.enrolled,name];
+    return{...c,enrolled:e};
+  });
+  saveC();render();
+}
+function rmClass(id){classes=classes.filter(c=>c.id!=id);saveC();render();}
+function addNewClass(){
+  const day=document.getElementById('nc-day').value;
+  const time=document.getElementById('nc-time').value;
+  const teacher=document.getElementById('nc-teacher').value;
+  const spots=parseInt(document.getElementById('nc-spots').value)||10;
+  classes=[...classes,{id:Date.now(),day,time,teacher,spots,enrolled:[]}];
+  saveC();render();
+}
+function rmAbsence(i){absences=absences.filter((_,j)=>j!==i);saveA();render();}
+
+// Confirm absence
+function confirmAbsence(){
+  if(!selClass||!selStudent) return notif('Completá todos los campos','error');
+  const cls=classes.find(c=>c.id==selClass);
+  if(!cls.enrolled.includes(selStudent)) return notif('No estás inscripta en esa clase','error');
+  if(absences.find(a=>a.classId==selClass&&a.studentName===selStudent)) return notif('Ya avisaste tu falta','error');
+  absences=[...absences,{classId:selClass,studentName:selStudent}];
+  saveA();
+  notif('¡Listo! Tu lugar quedó disponible 🌸');
+  const phone=TEACHERS[cls.teacher];
+  const msg='🌸 *Pilates Mare*\n\nHola '+cls.teacher+'! Te aviso que *'+selStudent+'* no va a poder ir a tu clase del *'+cls.day+' a las '+cls.time+'hs*.\n\nSu lugar quedó disponible. 🧘‍♀️';
+  openWA(phone,msg);
+  showView('home');
+}
+// Confirm join
+function confirmJoin(){
+  const name=joinSt||joinName.trim();
+  if(!selClass||!name) return notif('Completá todos los campos','error');
+  const cls=classes.find(c=>c.id==selClass);
+  if(free(cls)<=0) return notif('No hay lugares disponibles','error');
+  if(cls.enrolled.includes(name)) return notif('Ya estás inscripta','error');
+  classes=classes.map(c=>c.id==selClass?{...c,enrolled:[...c.enrolled,name]}:c);
+  const rm=absences.find(a=>a.classId==selClass);
+  if(rm) absences=absences.filter(a=>!(a.classId==selClass&&a.studentName===rm.studentName));
+  saveC();saveA();
+  notif('¡Genial! Te sumaste 🎉');
+  const phone=TEACHERS[cls.teacher];
+  const msg='🌸 *Pilates Mare*\n\nHola '+cls.teacher+'! *'+name+'* se anotó en tu clase del *'+cls.day+' a las '+cls.time+'hs*. 🧘‍♀️';
+  openWA(phone,msg);
+  showView('home');
+}
+
+// ── RENDER ────────────────────────────────────────────────────
+function render(){
+  const el=document.getElementById('wrap');
+  if(view==='home') el.innerHTML=rHome();
+  else if(view==='absence') el.innerHTML=rAbsence();
+  else if(view==='join') el.innerHTML=rJoin();
+  else if(view==='admin') el.innerHTML=rAdmin();
+}
+
+function rHome(){
+  const avail=classes.filter(c=>free(c)>0&&absFor(c.id).length>0);
+  const dayCls=classes.filter(c=>c.day===schedDay);
+  let h='<div class="grid2">';
+  h+='<button class="bigbtn" style="background:linear-gradient(135deg,#f5c6cb,#f0a0b0)" onclick="showView(\'absence\')"><div style="font-size:28px;margin-bottom:6px">🙋‍♀️</div><div style="font-size:15px;font-weight:bold;margin-bottom:3px">Aviso que falto</div><div style="font-size:11px;opacity:0.9">Liberá tu lugar</div></button>';
+  h+='<button class="bigbtn" style="background:linear-gradient(135deg,#b5d4e8,#8ab8d8)" onclick="showView(\'join\')"><div style="font-size:28px;margin-bottom:6px">🧘‍♀️</div><div style="font-size:15px;font-weight:bold;margin-bottom:3px">Quiero un lugar</div><div style="font-size:11px;opacity:0.9">Sumarte a una clase</div></button>';
+  h+='</div>';
+  if(avail.length>0){
+    h+='<div class="card" style="border:1px solid rgba(200,160,120,0.3);margin-bottom:20px"><div style="font-size:11px;color:#7a5a3a;font-weight:bold;margin-bottom:10px;letter-spacing:1px">✨ LUGARES DISPONIBLES</div>';
+    avail.forEach(c=>{
+      const n=absFor(c.id).length;
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(200,180,160,0.2)"><span><span style="color:'+DAY_COLORS[c.day]+';font-weight:bold">'+c.day+'</span><span style="color:#777;margin-left:8px">'+c.time+'hs</span></span><span class="badge bg">'+n+' libre'+(n>1?'s':'')+'</span></div>';
+    });
+    h+='</div>';
+  }
+  h+='<div style="font-size:11px;color:#9a7080;letter-spacing:2px;margin-bottom:12px">HORARIOS SEMANALES</div>';
+  h+='<div class="tabs">';
+  ALL_DAYS.forEach(d=>{
+    h+='<button class="tab'+(d===schedDay?' on':'')+'" style="'+(d===schedDay?'background:'+DAY_COLORS[d]+';':'')+'" onclick="schedDay=\''+d+'\';render()">'+d+'</button>';
+  });
+  h+='</div>';
+  if(!dayCls.length) h+='<div style="text-align:center;color:#bbb;font-size:14px;padding:24px">No hay clases este día</div>';
+  dayCls.forEach(c=>{
+    const f=free(c);
+    h+='<div class="card" style="border-left:4px solid '+DAY_COLORS[schedDay]+'">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center">';
+    h+='<div><div style="font-size:17px;font-weight:bold;color:#5a3a4a">'+c.time+'hs</div><div style="font-size:12px;color:#9a7080;margin-top:2px">👩‍🏫 '+c.teacher+'</div><div style="font-size:11px;color:#b09080;margin-top:1px">'+c.enrolled.length+'/'+c.spots+' inscriptas</div></div>';
+    h+='<span class="badge '+(f>0?'bo':'br')+'">'+(f>0?f+' libre'+(f>1?'s':''):'Completa')+'</span>';
+    h+='</div></div>';
+  });
+  return h;
+}
+
+function rAbsence(){
+  let h='<button class="bbtn" onclick="showView(\'home\')">← Volver</button>';
+  h+='<div style="font-size:22px;font-weight:bold;color:#7a4a5a;margin-bottom:6px">🙋‍♀️ Aviso que falto</div>';
+  h+='<div style="font-size:13px;color:#9a7080;margin-bottom:20px">Tu lugar quedará disponible para otra alumna.</div>';
+  h+='<label>¿Cuál es tu nombre?</label>';
+  h+='<select onchange="selStudent=this.value;render()"><option value="">Seleccioná tu nombre...</option>';
+  students.forEach(s=>{ h+='<option value="'+s.name+'"'+(s.name===selStudent?' selected':'')+'>'+s.name+'</option>'; });
+  h+='</select>';
+  if(selStudent){
+    h+='<label style="margin-top:8px">¿A qué clase no vas a ir?</label>';
+    ALL_DAYS.forEach(day=>{
+      const dc=classes.filter(c=>c.day===day&&c.enrolled.includes(selStudent));
+      if(!dc.length) return;
+      h+='<div style="font-size:10px;color:#a07080;letter-spacing:1px;margin:10px 0 5px">'+day.toUpperCase()+'</div>';
+      dc.forEach(c=>{
+        const isSel=selClass==c.id;
+        const already=absences.find(a=>a.classId==c.id&&a.studentName===selStudent);
+        h+='<button class="clsbtn'+(isSel?' sel':'')+(already?' dis':'')+'" onclick="'+(already?'':'selClass='+c.id+';render()')+'">';
+        h+='<span>'+c.time+'hs <span style="font-size:11px;color:#b09080">· '+c.teacher+'</span></span>';
+        h+=already?'<span style="font-size:11px;color:#aaa">ya avisaste ✓</span>':(isSel?'<span style="color:#d4809a">✓</span>':'');
+        h+='</button>';
+      });
+    });
+    if(!classes.some(c=>c.enrolled.includes(selStudent)))
+      h+='<div style="color:#aaa;font-size:13px;text-align:center;padding:16px">No estás inscripta en ninguna clase</div>';
+  }
+  h+='<button class="pbtn" style="background:linear-gradient(135deg,#d4809a,#e0a0b5)" onclick="confirmAbsence()">Confirmar y avisar por WhatsApp 📲</button>';
+  h+='<div style="text-align:center;font-size:11px;color:#b09098;margin-top:8px">Se abre WhatsApp con un mensaje listo para la profe</div>';
+  return h;
+}
+
+function rJoin(){
+  const avail=classes.filter(c=>free(c)>0);
+  let h='<button class="bbtn" onclick="showView(\'home\')">← Volver</button>';
+  h+='<div style="font-size:22px;font-weight:bold;color:#4a5a7a;margin-bottom:6px">🧘‍♀️ Quiero un lugar</div>';
+  h+='<div style="font-size:13px;color:#9a7080;margin-bottom:20px">Clases con lugares disponibles.</div>';
+  h+='<label>¿Cuál es tu nombre?</label>';
+  h+='<select onchange="joinSt=this.value;joinName=\'\';render()"><option value="">Seleccioná tu nombre...</option>';
+  students.forEach(s=>{ h+='<option value="'+s.name+'"'+(s.name===joinSt?' selected':'')+'>'+s.name+'</option>'; });
+  h+='</select>';
+  if(!joinSt) h+='<input type="text" placeholder="O escribí tu nombre si es tu primera vez..." value="'+joinName+'" oninput="joinName=this.value">';
+  h+='<label style="margin-top:6px">¿A qué clase querés sumarte?</label>';
+  if(!avail.length) h+='<div class="card" style="text-align:center;color:#aaa;font-size:13px">No hay lugares disponibles.<br><span style="font-size:11px">Revisá más tarde 🌸</span></div>';
+  avail.forEach(c=>{
+    const f=free(c);const isSel=selClass==c.id;
+    h+='<button class="jbtn'+(isSel?' sel':'')+'" onclick="selClass='+(isSel?'null':c.id)+';render()">';
+    h+='<div><div style="font-size:14px;font-weight:bold;color:#3a4a6a">'+c.day+' — '+c.time+'hs</div><div style="font-size:11px;color:#8090a0;margin-top:2px">👩‍🏫 '+c.teacher+' · '+c.enrolled.length+' de '+c.spots+'</div></div>';
+    h+='<span class="badge bg">'+f+' libre'+(f>1?'s':'')+'</span></button>';
+  });
+  h+='<button class="pbtn" style="background:linear-gradient(135deg,#8ab8d8,#a5c8e8)" onclick="confirmJoin()">Confirmar mi lugar 📲</button>';
+  return h;
+}
+
+function rAdmin(){
+  let h='<button class="bbtn" onclick="showView(\'home\')">← Volver</button>';
+  h+='<div style="font-size:20px;font-weight:bold;color:#5a4a3a;margin-bottom:16px">⚙ Panel Admin</div>';
+  h+='<div class="tabs" style="border-bottom:1px solid rgba(200,180,180,0.3);padding-bottom:10px;margin-bottom:16px">';
+  [['alumnas','👩‍🎓 Alumnas'],['pagos','💰 Pagos'],['clases','📅 Horarios'],['ausencias','🙋 Ausencias'],['profes','👩‍🏫 Profes']].forEach(([k,l])=>{
+    h+='<button class="tab'+(adminTab===k?' on':'')+'" style="'+(adminTab===k?'background:#d4809a;':'')+'" onclick="adminTab=\''+k+'\';render()">'+l+'</button>';
+  });
+  h+='</div>';
+  if(adminTab==='alumnas') h+=rAdminAlumnas();
+  else if(adminTab==='pagos') h+=rAdminPagos();
+  else if(adminTab==='clases') h+=rAdminClases();
+  else if(adminTab==='ausencias') h+=rAdminAusencias();
+  else if(adminTab==='profes') h+=rAdminProfes();
+  return h;
+}
+
+function rAdminAlumnas(){
+  const activeList=students.filter(s=>s.active!==false);
+  const bajaList=students.filter(s=>s.active===false);
+  let h='<div style="font-size:11px;color:#9a7080;letter-spacing:1.5px;margin-bottom:12px;font-weight:bold">👩‍🎓 ALUMNAS — '+activeList.length+' activas · '+bajaList.length+' bajas</div>';
+  h+='<button onclick="openEditSt(-1)" style="width:100%;padding:12px;background:linear-gradient(135deg,#7aab8a,#5a9a7a);border:none;color:white;border-radius:12px;font-size:14px;cursor:pointer;font-family:Georgia,serif;margin-bottom:16px">+ Agregar nueva alumna</button>';
+  // Show active first, then bajas collapsed
+  const showBajas=window._showBajas||false;
+  const listToShow=showBajas?students:activeList;
+  if(bajaList.length>0){
+    h+='<button onclick="window._showBajas=!window._showBajas;render()" style="width:100%;padding:8px;background:none;border:1px solid rgba(200,180,180,0.4);color:#9a7080;border-radius:10px;font-size:12px;cursor:pointer;font-family:Georgia,serif;margin-bottom:12px">'+(showBajas?'Ocultar bajas':'Ver bajas ('+bajaList.length+')')+'</button>';
+  }
+  listToShow.forEach((s,i)=>{
+    const idx=students.indexOf(s);
+    const st=payStatus(s.name);
+    const isBaja=s.active===false;
+    const bc=isBaja?'#bbb':st==='overdue'?'#e57373':st==='warning'?'#ffb74d':st==='ok'?'#a5d4b4':'#ddd';
+    const myCls=classes.filter(c=>c.enrolled.includes(s.name));
+    const days=[...new Set(myCls.map(c=>c.day))];
+    const freq=days.includes('Lunes')?'L/M/V':days.includes('Martes')?'Mar/Jue':null;
+    const time=myCls.length>0?myCls[0].time:null;
+    h+='<div class="card" style="margin-bottom:8px;border-left:4px solid '+bc+';padding:12px;'+(isBaja?'opacity:0.65;':'')+'">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start">';
+    h+='<div style="flex:1">';
+    h+='<div style="font-size:15px;font-weight:bold;color:#5a3a4a">'+s.name+(isBaja?' <span style="font-size:10px;background:#eee;color:#999;padding:2px 6px;border-radius:8px">BAJA</span>':'')+'</div>';
+    if(freq&&time) h+='<div style="font-size:12px;color:#9a7080;margin-top:2px">'+freq+' · '+time+'hs</div>';
+    else h+='<div style="font-size:12px;color:#c09080;margin-top:2px">sin horario asignado</div>';
+    if(s.phone) h+='<div style="font-size:12px;color:#9a7080;margin-top:1px">📱 '+s.phone+'</div>';
+    if(s.birthdate) h+='<div style="font-size:11px;color:#b09080;margin-top:1px">🎂 '+s.birthdate+'</div>';
+    if(s.notes) h+='<div style="font-size:11px;color:#9a8070;margin-top:1px;font-style:italic">📝 '+s.notes+'</div>';
+    if(!isBaja){
+      const p=getPay(s.name);
+      if(p){const dl=daysLeft(s.name);const col=dl<0?'#e57373':dl<=5?'#e59040':'#7aab8a';
+        h+='<div style="font-size:11px;color:'+col+';margin-top:2px">'+(dl<0?'❗ Vencido ('+Math.abs(dl)+'d)':dl<=5?'⚠️ Vence en '+dl+'d':'✓ Vence '+p.dueDate)+'</div>';
+      } else h+='<div style="font-size:11px;color:#e57373;margin-top:2px">❗ Sin pago registrado</div>';
+    }
+    h+='</div>';
+    h+='<div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">';
+    h+='<button onclick="openEditSt('+idx+')" class="smb" style="background:#9a8090">✏️ Editar</button>';
+    if(s.phone&&!isBaja) h+='<button onclick="openWA(students['+idx+'].phone,'Hola '+students['+idx+'].name+'! 🌸')" class="smb" style="background:#25D366">💬 WA</button>';
+    if(!isBaja) h+='<button onclick="openRegisterPayment('+idx+')" class="smb" style="background:#7aab8a">💰 Pago</button>';
+    h+='</div></div></div>';
+  });
+  return h;
+}
+
+function rAdminPagos(){
+  const overdue=students.filter(s=>payStatus(s.name)==='overdue');
+  const warn=students.filter(s=>payStatus(s.name)==='warning');
+  const ok=students.filter(s=>payStatus(s.name)==='ok');
+  const none=students.filter(s=>payStatus(s.name)==='none');
+  let h='<div style="font-size:11px;color:#9a7080;letter-spacing:1.5px;margin-bottom:14px;font-weight:bold">💰 ESTADO DE PAGOS</div>';
+  h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px">';
+  h+='<div class="card" style="text-align:center;padding:12px;border-top:3px solid #e57373"><div style="font-size:24px;font-weight:bold;color:#e57373">'+overdue.length+'</div><div style="font-size:10px;color:#9a7080">VENCIDO</div></div>';
+  h+='<div class="card" style="text-align:center;padding:12px;border-top:3px solid #ffb74d"><div style="font-size:24px;font-weight:bold;color:#ffb74d">'+warn.length+'</div><div style="font-size:10px;color:#9a7080">POR VENCER</div></div>';
+  h+='<div class="card" style="text-align:center;padding:12px;border-top:3px solid #7aab8a"><div style="font-size:24px;font-weight:bold;color:#7aab8a">'+ok.length+'</div><div style="font-size:10px;color:#9a7080">AL DÍA</div></div>';
+  h+='<div class="card" style="text-align:center;padding:12px;border-top:3px solid #ddd"><div style="font-size:24px;font-weight:bold;color:#bbb">'+none.length+'</div><div style="font-size:10px;color:#9a7080">SIN DATO</div></div>';
+  h+='</div>';
+  function payRow(s,bc){
+    const i=students.indexOf(s);
+    const p=getPay(s.name);
+    const dl=daysLeft(s.name);
+    return '<div class="row" style="margin-bottom:6px;border-left:4px solid '+bc+'"><div style="flex:1"><div style="font-size:14px;font-weight:bold;color:#5a3a4a">'+s.name+'</div><div style="font-size:11px;color:#9a7080;margin-top:2px">'+(p?'Pagó: '+p.paidDate+' · Vence: '+p.dueDate:'Sin pago registrado')+'</div></div><div style="display:flex;gap:4px"><button onclick="openRegisterPayment('+i+')" class="smb" style="background:#7aab8a">💰</button><button onclick="sendDebt('+i+')" class="smb" style="background:#25D366">📲</button></div></div>';
+  }
+  if(overdue.length){
+    h+='<div style="font-size:11px;color:#c06060;font-weight:bold;letter-spacing:1px;margin-bottom:8px">❗ VENCIDOS</div>';
+    overdue.forEach(s=>h+=payRow(s,'#e57373'));
+  }
+  if(warn.length){
+    h+='<div style="font-size:11px;color:#e59040;font-weight:bold;letter-spacing:1px;margin:14px 0 8px">⚠️ VENCEN PRONTO</div>';
+    warn.forEach(s=>h+=payRow(s,'#ffb74d'));
+  }
+  if(ok.length){
+    h+='<div style="font-size:11px;color:#7aab8a;font-weight:bold;letter-spacing:1px;margin:14px 0 8px">✓ AL DÍA</div>';
+    ok.forEach(s=>h+=payRow(s,'#a5d4b4'));
+  }
+  if(none.length){
+    h+='<div style="font-size:11px;color:#bbb;font-weight:bold;letter-spacing:1px;margin:14px 0 8px">SIN REGISTRAR</div>';
+    none.forEach(s=>h+=payRow(s,'#ddd'));
+  }
+  return h;
+}
+
+function rAdminClases(){
+  let h='<div style="font-size:11px;color:#9a7080;letter-spacing:1.5px;margin-bottom:12px;font-weight:bold">📅 HORARIOS</div>';
+  h+='<div class="card" style="margin-bottom:16px"><div style="font-size:11px;color:#9a7080;letter-spacing:1px;margin-bottom:10px">NUEVA CLASE</div>';
+  h+='<div style="display:flex;gap:6px;flex-wrap:wrap">';
+  h+='<select id="nc-day" style="flex:1;min-width:100px">'+ALL_DAYS.map(d=>'<option>'+d+'</option>').join('')+'</select>';
+  h+='<input type="time" id="nc-time" value="09:00" style="width:100px">';
+  h+='<select id="nc-teacher" style="flex:1;min-width:100px">'+Object.keys(TEACHERS).map(t=>'<option>'+t+'</option>').join('')+'</select>';
+  h+='<input type="number" id="nc-spots" value="10" min="1" max="20" style="width:60px">';
+  h+='<button onclick="addNewClass()" class="smb" style="background:#d4809a;padding:8px 14px">+ Agregar</button>';
+  h+='</div></div>';
+  ALL_DAYS.forEach(day=>{
+    const dc=classes.filter(c=>c.day===day);
+    if(!dc.length) return;
+    h+='<div style="font-size:10px;letter-spacing:2px;color:white;background:'+DAY_COLORS[day]+';padding:5px 12px;border-radius:8px 8px 0 0;display:inline-block">'+day.toUpperCase()+'</div>';
+    dc.forEach(c=>{
+      const abs=absFor(c.id);
+      h+='<div style="background:rgba(255,255,255,0.8);border:1px solid rgba(200,180,180,0.2);border-radius:0 10px 10px 10px;margin-bottom:7px">';
+      h+='<div style="display:flex;align-items:center;padding:10px 14px;gap:8px">';
+      h+='<span style="font-weight:bold;color:#5a3a4a;flex:1">'+c.time+'hs <span style="font-size:11px;color:#b09080;font-weight:normal">· '+c.teacher+'</span></span>';
+      h+='<span style="font-size:11px;color:#9a7080">'+c.enrolled.length+'/'+c.spots+'</span>';
+      h+='<button onclick="this.parentElement.nextElementSibling.style.display=this.parentElement.nextElementSibling.style.display===\'none\'?\'block\':\'none\'" style="background:none;border:none;cursor:pointer;font-size:14px">▼</button>';
+      h+='<button onclick="rmClass('+c.id+')" style="background:none;border:none;cursor:pointer;font-size:14px">🗑️</button>';
+      h+='</div>';
+      h+='<div style="display:none;padding:0 14px 12px"><div style="font-size:10px;color:#9a7080;letter-spacing:1px;margin-bottom:7px">INSCRIPTAS — tocá para agregar/quitar</div><div>';
+      students.forEach(s=>{
+        const on=c.enrolled.includes(s.name);
+        const struck=abs.includes(s.name);
+        h+='<button class="itag'+(on?' on':'')+'" onclick="toggleEnroll('+c.id+',\''+s.name.replace(/'/g,"\\'")+'\')" style="'+(struck?'text-decoration:line-through;opacity:0.5;':'')+'">'+(on?'✓ ':'')+s.name+'</button>';
+      });
+      h+='</div></div></div>';
+    });
+  });
+  return h;
+}
+
+function rAdminAusencias(){
+  let h='<div style="font-size:11px;color:#9a7080;letter-spacing:1.5px;margin-bottom:12px;font-weight:bold">🙋 AUSENCIAS AVISADAS</div>';
+  if(!absences.length) h+='<div style="color:#bbb;font-size:13px;text-align:center;padding:28px">No hay ausencias avisadas 🌸</div>';
+  absences.forEach((a,i)=>{
+    const cls=classes.find(c=>c.id==a.classId);
+    h+='<div class="row" style="margin-bottom:6px"><div style="flex:1"><span style="font-weight:bold;color:#5a3a4a">'+a.studentName+'</span><span style="color:#aaa;margin-left:8px;font-size:12px">falta a '+(cls?cls.day+' '+cls.time+'hs':'clase eliminada')+'</span></div><button onclick="rmAbsence('+i+')" style="background:none;border:none;color:#e57373;cursor:pointer;font-size:16px">✕</button></div>';
+  });
+  return h;
+}
+
+function rAdminProfes(){
+  const colors={"Anabella":"#d4a5a5","Maia":"#a5b4d4","Rocío":"#a5d4b4","Antonela":"#d4cca5","Iara":"#c4a5d4"};
+  let h='<div style="font-size:11px;color:#9a7080;letter-spacing:1.5px;margin-bottom:12px;font-weight:bold">👩‍🏫 PROFES Y WHATSAPP</div>';
+  Object.entries(TEACHERS).forEach(([name,phone])=>{
+    h+='<div class="row" style="margin-bottom:8px;border-left:4px solid '+(colors[name]||'#ccc')+'"><div style="flex:1"><div style="font-weight:bold;color:#5a3a4a;font-size:14px">'+name+'</div><div style="font-size:11px;color:#9a8080;margin-top:2px">+'+phone+'</div></div>';
+    h+='<button onclick="openWA(\''+phone+'\',\'Hola '+name+'! 🌸\')" class="smb" style="background:'+(colors[name]||'#ccc')+';color:#5a3a4a">💬 WhatsApp</button></div>';
+  });
+  return h;
+}
+</script>
+
+</body>
+</html>
