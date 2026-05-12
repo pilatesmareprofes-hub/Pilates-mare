@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <meta name="theme-color" content="#f5e6e8" />
+  <title>Pilates Mare 🌸</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Georgia, serif; background: linear-gradient(135deg, #fdf6f0, #f5e6e8, #e8f0f5); min-height: 100vh; }
+    #loading { display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; color: #9a7080; }
+    #app { display: none; max-width: 600px; margin: 0 auto; padding: 16px; }
+    .header { background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(200,180,180,0.3); padding: 16px 24px; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; }
+    .header h1 { font-size: 20px; color: #7a4a5a; }
+    .header p { font-size: 11px; color: #a07080; letter-spacing: 2px; }
+    .btn { border: none; cursor: pointer; font-family: Georgia, serif; }
+    .admin-btn { background: none; border: 1px solid #c4a0b0; color: #7a4a5a; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; }
+    .admin-btn.active { background: #d4809a; color: white; }
+    .card { background: rgba(255,255,255,0.75); border: 1px solid rgba(200,180,180,0.2); border-radius: 16px; padding: 16px 20px; margin-bottom: 10px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+    .big-btn { border: none; border-radius: 20px; padding: 28px 20px; cursor: pointer; text-align: left; color: white; transition: transform 0.2s; width: 100%; }
+    .big-btn:hover { transform: translateY(-2px); }
+    .big-btn .icon { font-size: 32px; margin-bottom: 8px; }
+    .big-btn .title { font-size: 16px; font-weight: bold; margin-bottom: 4px; font-family: Georgia, serif; }
+    .big-btn .sub { font-size: 12px; opacity: 0.85; font-family: Georgia, serif; }
+    select, input[type=text], input[type=time], input[type=number] { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(200,180,180,0.3); background: rgba(255,255,255,0.85); font-size: 14px; font-family: Georgia, serif; color: #5a3a4a; outline: none; margin-bottom: 12px; }
+    label { display: block; font-size: 12px; color: #9a7080; letter-spacing: 1px; margin-bottom: 8px; }
+    .primary-btn { width: 100%; padding: 16px; color: white; border: none; border-radius: 16px; font-size: 16px; font-family: Georgia, serif; cursor: pointer; margin-top: 8px; }
+    .back-btn { background: none; border: none; color: #9a7080; cursor: pointer; font-size: 14px; margin-bottom: 20px; padding: 0; font-family: Georgia, serif; }
+    .badge { padding: 3px 12px; border-radius: 20px; font-size: 12px; }
+    .badge-green { background: #7aab8a; color: white; }
+    .badge-outline { background: rgba(122,171,138,0.15); color: #5a8a6a; border: 1px solid rgba(122,171,138,0.3); }
+    .badge-red { background: rgba(200,100,100,0.1); color: #c06060; border: 1px solid rgba(200,100,100,0.2); }
+    .tab-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .tab { padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(200,180,180,0.3); font-size: 13px; cursor: pointer; font-family: Georgia, serif; background: rgba(255,255,255,0.7); color: #7a5a6a; }
+    .tab.active { color: white; }
+    .notif { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 30px; color: white; font-size: 14px; font-family: Georgia, serif; z-index: 999; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    .class-tag { padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; font-family: Georgia, serif; margin: 3px; border: 1px solid rgba(200,180,180,0.3); background: rgba(240,240,240,0.5); color: #9a8090; display: inline-block; }
+    .class-tag.on { background: rgba(212,128,154,0.15); color: #b0506a; border-color: #d4809a; }
+    .class-btn { width: 100%; padding: 14px 16px; margin-bottom: 8px; border-radius: 14px; border: 1px solid rgba(200,180,180,0.3); background: rgba(255,255,255,0.8); color: #5a3a4a; cursor: pointer; text-align: left; font-size: 15px; font-family: Georgia, serif; display: flex; justify-content: space-between; align-items: center; }
+    .class-btn.selected { border: 2px solid #d4809a; background: rgba(212,128,154,0.12); }
+    .class-btn.disabled { background: #f0f0f0; color: #aaa; cursor: default; }
+    .join-btn { width: 100%; padding: 16px; margin-bottom: 10px; border-radius: 14px; border: 1px solid rgba(180,200,220,0.4); background: rgba(255,255,255,0.8); cursor: pointer; text-align: left; font-family: Georgia, serif; display: flex; justify-content: space-between; align-items: center; }
+    .join-btn.selected { border: 2px solid #8ab8d8; background: rgba(138,184,216,0.12); }
+    .row { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.75); border-radius: 12px; padding: 10px 14px; border: 1px solid rgba(200,180,180,0.2); margin-bottom: 6px; }
+    .saving { font-size: 11px; color: #9a7080; }
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <div style="font-size:48px;margin-bottom:16px">🌸</div>
+    <div style="font-size:18px;margin-bottom:8px">Pilates Mare</div>
+    <div style="font-size:14px;color:#b0a0a8">Cargando...</div>
+  </div>
+
+  <div style="background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);border-bottom:1px solid rgba(200,180,180,0.3);padding:16px 24px;position:sticky;top:0;z-index:100;display:none;align-items:center;justify-content:space-between;" id="header">
+    <div onclick="showView('home')" style="cursor:pointer">
+      <div style="font-size:20px;font-weight:bold;color:#7a4a5a;letter-spacing:1px">🌸 Pilates Mare</div>
+      <div style="font-size:11px;color:#a07080;letter-spacing:2px">GESTIÓN DE CLASES</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="saving" id="saving-indicator" style="display:none">💾 guardando...</span>
+      <button class="admin-btn" id="admin-btn" onclick="showView('admin')">⚙ Admin</button>
+    </div>
+  </div>
+
+  <div id="main-content" style="max-width:600px;margin:0 auto;padding:16px;display:none"></div>
+  <div id="notif" class="notif" style="display:none"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <script>
+  // ─── Firebase ───────────────────────────────────────────────
+  firebase.initializeApp({
+    apiKey: "AIzaSyCSyOrStnHfrV3205L1SjhkNBxI37dFCvc",
+    authDomain: "pilates-mare-77239.firebaseapp.com",
+    databaseURL: "https://pilates-mare-77239-default-rtdb.firebaseio.com",
+    projectId: "pilates-mare-77239",
+    storageBucket: "pilates-mare-77239.firebasestorage.app",
+    messagingSenderId: "977368688539",
+    appId: "1:977368688539:web:acaa904aef40dd1d71233e"
+  });
+  const db = firebase.database();
+
+  // ─── Data ───────────────────────────────────────────────────
+  const TEACHERS = {
+    "Anabella":"5493795310020","Maia":"5493873300222",
+    "Rocío":"5493794049367","Antonela":"5493794899757","Iara":"5493794401004"
+  };
+  const DAY_COLORS = {
+    "Lunes":"#d4a5a5","Martes":"#a5b4d4","Miércoles":"#a5d4b4",
+    "Jueves":"#d4cca5","Viernes":"#c4a5d4","Sábado":"#d4b4a5"
+  };
+  const ALL_DAYS = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+
+  const DEFAULT_CLASSES = [
+    {id:1,day:"Lunes",time:"08:00",teacher:"Anabella",spots:10,enrolled:[]},
+    {id:2,day:"Lunes",time:"09:00",teacher:"Anabella",spots:10,enrolled:[]},
+    {id:3,day:"Lunes",time:"10:00",teacher:"Anabella",spots:10,enrolled:[]},
+    {id:4,day:"Lunes",time:"11:00",teacher:"Anabella",spots:10,enrolled:[]},
+    {id:5,day:"Lunes",time:"14:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:6,day:"Lunes",time:"15:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:7,day:"Lunes",time:"16:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:8,day:"Lunes",time:"17:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:9,day:"Lunes",time:"18:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:10,day:"Lunes",time:"19:00",teacher:"Iara",spots:10,enrolled:[]},
+    {id:11,day:"Lunes",time:"20:00",teacher:"Iara",spots:10,enrolled:[]},
+    {id:12,day:"Martes",time:"08:00",teacher:"Maia",spots:10,enrolled:[]},
+    {id:13,day:"Martes",time:"09:00",teacher:"Maia",spots:10,enrolled:[]},
+    {id:14,day:"Martes",time:"10:00",teacher:"Rocío",spots:10,enrolled:[]},
+    {id:15,day:"Martes",time:"11:00",teacher:"Rocío",spots:10,enrolled:[]},
+    {id:16,day:"Martes",time:"14:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:17,day:"Martes",time:"15:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:18,day:"Martes",time:"16:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:19,day:"Martes",time:"17:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:20,day:"Martes",time:"18:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:21,day:"Martes",time:"19:00",teacher:"Iara",spots:10,enrolled:[]},
+    {id:22,day:"Martes",time:"20:00",teacher:"Iara",spots:10,enrolled:[]},
+    {id:23,day:"Miércoles",time:"08:00",teacher:"Anabella",spots:10,enrolled:[]},
+    {id:24,day:"Miércoles",time:"09:00",teacher:"Anabella",spots:10,enrolled:[]},
+    {id:25,day:"Miércoles",time:"10:00",teacher:"Anabella",spots:10,enrolled:[]},
+    {id:26,day:"Miércoles",time:"11:00",teacher:"Anabella",spots:10,enrolled:[]},
+    {id:27,day:"Miércoles",time:"14:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:28,day:"Miércoles",time:"15:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:29,day:"Miércoles",time:"16:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:30,day:"Miércoles",time:"17:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:31,day:"Miércoles",time:"18:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:32,day:"Miércoles",time:"19:00",teacher:"Iara",spots:10,enrolled:[]},
+    {id:33,day:"Miércoles",time:"20:00",teacher:"Iara",spots:10,enrolled:[]},
+    {id:34,day:"Jueves",time:"08:00",teacher:"Maia",spots:10,enrolled:[]},
+    {id:35,day:"Jueves",time:"09:00",teacher:"Maia",spots:10,enrolled:[]},
+    {id:36,day:"Jueves",time:"10:00",teacher:"Rocío",spots:10,enrolled:[]},
+    {id:37,day:"Jueves",time:"11:00",teacher:"Rocío",spots:10,enrolled:[]},
+    {id:38,day:"Jueves",time:"14:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:39,day:"Jueves",time:"15:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:40,day:"Jueves",time:"16:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:41,day:"Jueves",time:"17:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:42,day:"Jueves",time:"18:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:43,day:"Jueves",time:"19:00",teacher:"Iara",spots:10,enrolled:[]},
+    {id:44,day:"Jueves",time:"20:00",teacher:"Iara",spots:10,enrolled:[]},
+    {id:45,day:"Viernes",time:"08:00",teacher:"Anabella",spots:10,enrolled:[]},
+    {id:46,day:"Viernes",time:"09:00",teacher:"Anabella",spots:10,enrolled:[]},
+    {id:47,day:"Viernes",time:"10:00",teacher:"Anabella",spots:10,enrolled:[]},
+    {id:48,day:"Viernes",time:"11:00",teacher:"Anabella",spots:10,enrolled:[]},
+    {id:49,day:"Viernes",time:"14:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:50,day:"Viernes",time:"15:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:51,day:"Viernes",time:"16:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:52,day:"Viernes",time:"17:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:53,day:"Viernes",time:"18:00",teacher:"Antonela",spots:10,enrolled:[]},
+    {id:54,day:"Viernes",time:"19:00",teacher:"Iara",spots:10,enrolled:[]},
+    {id:55,day:"Viernes",time:"20:00",teacher:"Iara",spots:10,enrolled:[]}
+  ];
+
+  const DEFAULT_STUDENTS = ["Adara Galicia","Agostina Barreto","Agostina Rossi","Agustina Loza","Agustina Robledo","Agustina Simonetto","Aima Martinez","Alejandra Aguirre","Alejandra González","Alicia Alegre","Alicia Amarilla","Alicia Martinez","Aldo Fedrigo","Ana María","Ana María Olazarri","Andrea Alonso","Andrea Galarza","Andrea Maidana","Andrea Martelotte","Andrea Ramírez","Andrea Zafaroni","Ania Ferrero","Antonella Montanaro","Aranzazu Lagomarsino","Araceli Arrua","Ariana Bernachea","Ariana Giménez","Aurora Arata","Azucena Panozzo","Azul Alonzo","Barbara Olivera","Belen Sánchez","Bettina Saldaqui","Bibiana Bambula","Bibiana Billinger","Camila Aguirre","Camila D'amigo","Camila Fiori","Camila Lomonaco","Camila Pasini","Carmen Cuenca","Carla Grezca","Cecilia Ávila","Cecilia Folguera","Cecilia Morales","Celeste Gimenez","Charo","Cinthia Rolón","Cintia Rodríguez","Clarisa Yunes","Claudia Guastavino","Claudia Marini","Claudia Vicente","Claudio Queirel","Dahiana Torres","Daiana Bunchich","Daniela Amud","Daniela Díaz","Dora Lapuente","Dulce María Ortiz","Eliana Benasulin","Elizabeth","Emilia Costaguta","Emilse García","Esther Branca","Espinoza María","Eugenia Fedrigo","Eugenia Ferrin","Evangelina Acosta","Felicitas Alonso","Fernanda Alegre","Fernanda Flores","Flavia Consorti","Florencia Correa","Florencia Giménez","Florencia Pannunzio","Florencia Rodríguez","Fransisca Figueroa","Gabriel Provasi","Gabriela Schneider","Gloria Sánchez","Graciela Álvarez","Graciela Pérez","Griselda da Silva","Guada Perrota","Guillermina Gómez","Guillermina Sandrigo","Guillermo Fiat","Hilda Simoncioni","Iara Ramírez","Jerónimo Búfalo","Julia Grosso","Juliana Molero","Julieta Quintana","Karina Barrios","Karina Durand","Karla Monzon","Kelly Azvolinsky","Laura Grand","Laura Gómez","Laura Lovey","Laura Zabala","Leila Lemos","Lorena","Lorena Portillo","Lucia Pereyra","Lucia Posman","Ludmila Saulichi","Luján Gómez","Luz Gomez","Mabel Miranda","Macarena Jurado","Madelein Rach","Madeleine Gallardo","Maia","Manuela Fernández","Marcela Cendolla","Mariana Mariño","Mariangeles Ramírez","Mariela Diguini","Mariela Fernández","Marina Mariño","Marisol Casabonne","Marita Estigarribia","Martha Castro","Martina Hija Mari","María Ferreira","María José Recalde","María Rosa Zeniquel","María Slavin","Mercedes Delgado","Mercedes Paredes","Micaela Aguilera","Milagros Malgor","Milagros Ramírez","Mileyna Ledesma","Mirta Esmendi","Mirtha Lagraña","Mónica Aguilar","Mónica Noir","Nancy González","Nara Velardo","Natalia Leisteimi","Natalia Romero","Nayla Sosa","Noelia Gómez","Noelia Saucedo","Noelia Sarabia","Noel San Felice","Ornella Lupi","Oriana Lupi","Orue Patricia","Pablo Martinez","Paola Olivera","Patricia Maidana","Patricia Poritu","Patricia Wetzel","Paula Damico","Paulina","Pia","Raquel Ascoto","Rocío Medina","Rocío Torres","Romina Miño","Samara Silva","Santiago Arregin","Sara Perrens","Silvia Alegre","Silvia Coceres","Silvia Escobar","Silvia Veron","Silvana Picchio","Silvana Rolón","Sofia Alsina","Sofía Ramírez","Solange Cendoya","Soledad Balado","Susana Ricagno","Susana Silva","Susana Surt","Tamara Gómez","Valentina Gómez","Valentina Miranda","Valeria Rolón","Vanesa Morales","Verónica Fernández","Victoria Velázquez","Virginia Navarro","Viviana Benetti","Viviana Soto","Yésica Gomez","Yudith Tauber","Zunilda"];
+
+  // ─── State ──────────────────────────────────────────────────
+  let classes = DEFAULT_CLASSES;
+  let students = DEFAULT_STUDENTS;
+  let absences = [];
+  let view = 'home';
+  let scheduleDay = 'Lunes';
+  let selectedClass = null;
+  let selectedStudent = '';
+  let joinStudent = '';
+  let joinName = '';
+  let adminTab = 'clases';
+
+  // ─── Firebase save/load ─────────────────────────────────────
+  function showSaving() {
+    document.getElementById('saving-indicator').style.display = 'inline';
+    setTimeout(() => { document.getElementById('saving-indicator').style.display = 'none'; }, 1200);
+  }
+  function saveClasses() { showSaving(); db.ref('classes').set(classes); }
+  function saveStudents() { showSaving(); db.ref('students').set(students); }
+  function saveAbsences() { showSaving(); db.ref('absences').set(absences); }
+
+  // ─── Init ────────────────────────────────────────────────────
+  Promise.all([
+    db.ref('classes').once('value').then(s => { if(s.val()) classes = s.val(); }),
+    db.ref('students').once('value').then(s => { if(s.val()) students = s.val(); }),
+    db.ref('absences').once('value').then(s => { if(s.val()) absences = s.val(); else absences = []; })
+  ]).then(() => {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('header').style.display = 'flex';
+    document.getElementById('main-content').style.display = 'block';
+    render();
+  }).catch(e => {
+    console.error(e);
+    document.getElementById('loading').innerHTML = '<div style="color:#c06060;text-align:center;padding:32px">Error al conectar. Revisá tu conexión e intentá de nuevo.</div>';
+  });
+
+  // ─── Helpers ─────────────────────────────────────────────────
+  function getAbsents(classId) { return absences.filter(a => a.classId == classId).map(a => a.studentName); }
+  function freeSpots(c) { return getAbsents(c.id).length + (c.spots - c.enrolled.length); }
+  function showNotif(msg, type) {
+    const n = document.getElementById('notif');
+    n.textContent = msg;
+    n.style.background = type === 'error' ? '#e57373' : '#7aab8a';
+    n.style.display = 'block';
+    setTimeout(() => n.style.display = 'none', 3000);
+  }
+  function sendWA(teacher, student, day, time, type) {
+    const phone = TEACHERS[teacher];
+    if (!phone) return;
+    const msg = type === 'absence'
+      ? '🌸 *Pilates Mare*\n\nHola ' + teacher + '! Te aviso que *' + student + '* no va a poder ir a tu clase del *' + day + ' a las ' + time + 'hs*.\n\nSu lugar quedó disponible. 🧘‍♀️'
+      : '🌸 *Pilates Mare*\n\nHola ' + teacher + '! *' + student + '* se anotó en tu clase del *' + day + ' a las ' + time + 'hs*. 🧘‍♀️';
+    window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
+  }
+  function showView(v) {
+    view = v;
+    selectedClass = null; selectedStudent = ''; joinStudent = ''; joinName = '';
+    document.getElementById('admin-btn').classList.toggle('active', v === 'admin');
+    render();
+  }
+
+  // ─── Actions ─────────────────────────────────────────────────
+  function confirmAbsence() {
+    if (!selectedClass || !selectedStudent) return showNotif('Completá todos los campos', 'error');
+    const cls = classes.find(c => c.id == selectedClass);
+    if (!cls.enrolled.includes(selectedStudent)) return showNotif('No estás inscripta en esa clase', 'error');
+    if (absences.find(a => a.classId == selectedClass && a.studentName === selectedStudent)) return showNotif('Ya avisaste tu falta', 'error');
+    absences = [...absences, {classId: selectedClass, studentName: selectedStudent}];
+    saveAbsences();
+    showNotif('¡Listo! Tu lugar en ' + cls.day + ' ' + cls.time + 'hs quedó disponible 🌸');
+    sendWA(cls.teacher, selectedStudent, cls.day, cls.time, 'absence');
+    showView('home');
+  }
+
+  function confirmJoin() {
+    const name = joinStudent || joinName.trim();
+    if (!selectedClass || !name) return showNotif('Completá todos los campos', 'error');
+    const cls = classes.find(c => c.id == selectedClass);
+    if (freeSpots(cls) <= 0) return showNotif('No hay lugares disponibles', 'error');
+    if (cls.enrolled.includes(name)) return showNotif('Ya estás inscripta en esa clase', 'error');
+    classes = classes.map(c => c.id == selectedClass ? {...c, enrolled: [...c.enrolled, name]} : c);
+    const toRemove = absences.find(a => a.classId == selectedClass);
+    if (toRemove) absences = absences.filter(a => !(a.classId == selectedClass && a.studentName === toRemove.studentName));
+    saveClasses(); saveAbsences();
+    showNotif('¡Genial! Te sumaste a ' + cls.day + ' ' + cls.time + 'hs 🎉');
+    sendWA(cls.teacher, name, cls.day, cls.time, 'join');
+    showView('home');
+  }
+
+  function toggleEnroll(classId, name) {
+    classes = classes.map(c => {
+      if (c.id != classId) return c;
+      const enrolled = c.enrolled.includes(name) ? c.enrolled.filter(e => e !== name) : [...c.enrolled, name];
+      return {...c, enrolled};
+    });
+    saveClasses(); render();
+  }
+
+  function removeClass(id) { classes = classes.filter(c => c.id != id); saveClasses(); render(); }
+  function removeStudent(name) { students = students.filter(s => s !== name); saveStudents(); render(); }
+  function removeAbsence(i) { absences = absences.filter((_,j) => j !== i); saveAbsences(); render(); }
+
+  function addStudent() {
+    const inp = document.getElementById('new-student');
+    const name = inp.value.trim();
+    if (!name || students.includes(name)) return;
+    students = [...students, name].sort();
+    saveStudents(); inp.value = ''; render();
+  }
+
+  function addClass() {
+    const day = document.getElementById('nc-day').value;
+    const time = document.getElementById('nc-time').value;
+    const teacher = document.getElementById('nc-teacher').value;
+    const spots = parseInt(document.getElementById('nc-spots').value) || 10;
+    const id = Date.now();
+    classes = [...classes, {id, day, time, teacher, spots, enrolled:[]}];
+    saveClasses(); render();
+  }
+
+  // ─── Render ──────────────────────────────────────────────────
+  function render() {
+    const el = document.getElementById('main-content');
+    if (view === 'home') el.innerHTML = renderHome();
+    else if (view === 'absence') el.innerHTML = renderAbsence();
+    else if (view === 'join') el.innerHTML = renderJoin();
+    else if (view === 'admin') el.innerHTML = renderAdmin();
+  }
+
+  function renderHome() {
+    const availCls = classes.filter(c => freeSpots(c) > 0 && getAbsents(c.id).length > 0);
+    const dayCls = classes.filter(c => c.day === scheduleDay);
+
+    let html = '<div class="grid2">';
+    html += '<button class="big-btn" style="background:linear-gradient(135deg,#f5c6cb,#f0a0b0)" onclick="showView(\'absence\')">';
+    html += '<div class="icon">🙋‍♀️</div><div class="title">Aviso que falto</div><div class="sub">Liberá tu lugar para otra alumna</div></button>';
+    html += '<button class="big-btn" style="background:linear-gradient(135deg,#b5d4e8,#8ab8d8)" onclick="showView(\'join\')">';
+    html += '<div class="icon">🧘‍♀️</div><div class="title">Quiero un lugar</div><div class="sub">Sumarte a una clase disponible</div></button>';
+    html += '</div>';
+
+    if (availCls.length > 0) {
+      html += '<div class="card" style="border:1px solid rgba(200,160,120,0.3);margin-bottom:24px">';
+      html += '<div style="font-size:12px;color:#7a5a3a;font-weight:bold;margin-bottom:12px;letter-spacing:1px">✨ LUGARES DISPONIBLES</div>';
+      availCls.forEach(c => {
+        const n = getAbsents(c.id).length;
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(200,180,160,0.2)">';
+        html += '<span><span style="color:' + DAY_COLORS[c.day] + ';font-weight:bold">' + c.day + '</span><span style="color:#777;margin-left:8px">' + c.time + 'hs</span></span>';
+        html += '<span class="badge badge-green">' + n + ' libre' + (n>1?'s':'') + '</span></div>';
+      });
+      html += '</div>';
+    }
+
+    html += '<div style="font-size:11px;color:#9a7080;letter-spacing:2px;margin-bottom:14px">HORARIOS SEMANALES</div>';
+    html += '<div class="tab-row">';
+    ALL_DAYS.forEach(d => {
+      const active = d === scheduleDay;
+      html += '<button class="tab' + (active?' active':'') + '" style="' + (active?'background:'+DAY_COLORS[d]+';':'') + '" onclick="scheduleDay=\'' + d + '\';render()">' + d + '</button>';
+    });
+    html += '</div>';
+
+    if (dayCls.length === 0) html += '<div style="text-align:center;color:#bbb;font-size:14px;padding:24px">No hay clases este día</div>';
+    dayCls.forEach(c => {
+      const free = freeSpots(c);
+      html += '<div class="card" style="border-left:4px solid ' + DAY_COLORS[scheduleDay] + '">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center">';
+      html += '<div><div style="font-size:18px;font-weight:bold;color:#5a3a4a">' + c.time + 'hs</div>';
+      html += '<div style="font-size:13px;color:#9a7080;margin-top:2px">👩‍🏫 ' + c.teacher + '</div>';
+      html += '<div style="font-size:12px;color:#b09080;margin-top:1px">' + c.enrolled.length + '/' + c.spots + ' inscriptas</div></div>';
+      html += '<span class="badge ' + (free>0?'badge-outline':'badge-red') + '">' + (free>0?free+' libre'+(free>1?'s':''):'Completa') + '</span>';
+      html += '</div></div>';
+    });
+    return html;
+  }
+
+  function renderAbsence() {
+    let html = '<button class="back-btn" onclick="showView(\'home\')">← Volver</button>';
+    html += '<div style="font-size:24px;font-weight:bold;color:#7a4a5a;margin-bottom:8px">🙋‍♀️ Aviso que falto</div>';
+    html += '<div style="font-size:14px;color:#9a7080;margin-bottom:28px">Tu lugar quedará disponible para otra alumna.</div>';
+    html += '<label>¿Cuál es tu nombre?</label>';
+    html += '<select onchange="selectedStudent=this.value;render()" id="sel-student"><option value="">Seleccioná tu nombre...</option>';
+    students.forEach(s => html += '<option value="' + s + '"' + (s===selectedStudent?' selected':'') + '>' + s + '</option>');
+    html += '</select>';
+
+    if (selectedStudent) {
+      html += '<label>¿A qué clase no vas a ir?</label>';
+      ALL_DAYS.forEach(day => {
+        const dayCls = classes.filter(c => c.day === day && c.enrolled.includes(selectedStudent));
+        if (!dayCls.length) return;
+        html += '<div style="font-size:11px;color:#a07080;letter-spacing:1px;margin:12px 0 6px">' + day.toUpperCase() + '</div>';
+        dayCls.forEach(c => {
+          const isSel = selectedClass == c.id;
+          const already = absences.find(a => a.classId == c.id && a.studentName === selectedStudent);
+          html += '<button class="class-btn' + (isSel?' selected':'') + (already?' disabled':'') + '" onclick="' + (!already ? 'selectedClass=' + c.id + ';render()' : '') + '">';
+          html += '<span>' + c.time + 'hs <span style="font-size:12px;color:#b09080">· ' + c.teacher + '</span></span>';
+          html += already ? '<span style="font-size:12px;color:#aaa">ya avisaste ✓</span>' : (isSel ? '<span style="color:#d4809a">✓</span>' : '');
+          html += '</button>';
+        });
+      });
+      if (!classes.some(c => c.enrolled.includes(selectedStudent))) {
+        html += '<div style="color:#aaa;font-size:14px;text-align:center;padding:20px">No estás inscripta en ninguna clase</div>';
+      }
+    }
+
+    html += '<button class="primary-btn" style="background:linear-gradient(135deg,#d4809a,#e0a0b5)" onclick="confirmAbsence()">Confirmar y avisar por WhatsApp 📲</button>';
+    html += '<div style="text-align:center;font-size:12px;color:#b09098;margin-top:10px">Se va a abrir WhatsApp con un mensaje listo para la profe</div>';
+    return html;
+  }
+
+  function renderJoin() {
+    const availCls = classes.filter(c => freeSpots(c) > 0);
+    let html = '<button class="back-btn" onclick="showView(\'home\')">← Volver</button>';
+    html += '<div style="font-size:24px;font-weight:bold;color:#4a5a7a;margin-bottom:8px">🧘‍♀️ Quiero un lugar</div>';
+    html += '<div style="font-size:14px;color:#9a7080;margin-bottom:28px">Clases con lugares disponibles.</div>';
+    html += '<label>¿Cuál es tu nombre?</label>';
+    html += '<select onchange="joinStudent=this.value;joinName=\'\';render()"><option value="">Seleccioná tu nombre (si ya sos alumna)...</option>';
+    students.forEach(s => html += '<option value="' + s + '"' + (s===joinStudent?' selected':'') + '>' + s + '</option>');
+    html += '</select>';
+    if (!joinStudent) html += '<input type="text" placeholder="O escribí tu nombre si es tu primera vez..." value="' + joinName + '" oninput="joinName=this.value">';
+
+    html += '<label style="margin-top:8px">¿A qué clase querés sumarte?</label>';
+    if (availCls.length === 0) {
+      html += '<div class="card" style="text-align:center;color:#aaa;font-size:14px">No hay lugares disponibles.<br><span style="font-size:12px">Revisá más tarde 🌸</span></div>';
+    }
+    availCls.forEach(c => {
+      const free = freeSpots(c);
+      const isSel = selectedClass == c.id;
+      html += '<button class="join-btn' + (isSel?' selected':'') + '" onclick="selectedClass=' + (isSel?'null':c.id) + ';render()">';
+      html += '<div><div style="font-size:15px;font-weight:bold;color:#3a4a6a">' + c.day + ' — ' + c.time + 'hs</div>';
+      html += '<div style="font-size:12px;color:#8090a0;margin-top:2px">👩‍🏫 ' + c.teacher + ' · ' + c.enrolled.length + ' de ' + c.spots + '</div></div>';
+      html += '<span class="badge badge-green">' + free + ' libre' + (free>1?'s':'') + '</span></button>';
+    });
+
+    html += '<button class="primary-btn" style="background:linear-gradient(135deg,#8ab8d8,#a5c8e8)" onclick="confirmJoin()">Confirmar mi lugar 📲</button>';
+    return html;
+  }
+
+  function renderAdmin() {
+    let html = '<button class="back-btn" onclick="showView(\'home\')">← Volver al inicio</button>';
+    html += '<div style="font-size:22px;font-weight:bold;color:#5a4a3a;margin-bottom:20px">⚙ Panel de Administración</div>';
+    html += '<div class="tab-row" style="border-bottom:1px solid rgba(200,180,180,0.3);padding-bottom:12px;margin-bottom:20px">';
+    [['clases','📅 Horarios'],['alumnas','👩‍🎓 Alumnas'],['ausencias','🙋 Ausencias'],['profes','👩‍🏫 Profes']].forEach(([k,l]) => {
+      html += '<button class="tab' + (adminTab===k?' active':'') + '" style="' + (adminTab===k?'background:#d4809a;color:white;':'') + '" onclick="adminTab=\'' + k + '\';render()">' + l + '</button>';
+    });
+    html += '</div>';
+
+    if (adminTab === 'clases') html += renderAdminClases();
+    else if (adminTab === 'alumnas') html += renderAdminAlumnas();
+    else if (adminTab === 'ausencias') html += renderAdminAusencias();
+    else if (adminTab === 'profes') html += renderAdminProfes();
+    return html;
+  }
+
+  function renderAdminClases() {
+    let html = '<div style="font-size:12px;color:#9a7080;letter-spacing:1.5px;margin-bottom:16px;font-weight:bold">📅 HORARIOS</div>';
+    html += '<div class="card" style="margin-bottom:20px">';
+    html += '<div style="font-size:11px;color:#9a7080;letter-spacing:1px;margin-bottom:12px">NUEVA CLASE</div>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:8px">';
+    html += '<select id="nc-day" style="flex:1;min-width:100px">' + ALL_DAYS.map(d => '<option>' + d + '</option>').join('') + '</select>';
+    html += '<input type="time" id="nc-time" value="09:00" style="width:100px">';
+    html += '<select id="nc-teacher" style="flex:1;min-width:100px">' + Object.keys(TEACHERS).map(t => '<option>' + t + '</option>').join('') + '</select>';
+    html += '<input type="number" id="nc-spots" value="10" min="1" max="20" style="width:60px">';
+    html += '<button onclick="addClass()" style="background:#d4809a;border:none;color:white;padding:8px 14px;border-radius:10px;font-size:13px;cursor:pointer;font-family:Georgia,serif">+ Agregar</button>';
+    html += '</div></div>';
+
+    ALL_DAYS.forEach(day => {
+      const dayCls = classes.filter(c => c.day === day);
+      if (!dayCls.length) return;
+      html += '<div style="font-size:11px;letter-spacing:2px;color:white;background:' + DAY_COLORS[day] + ';padding:6px 14px;border-radius:10px 10px 0 0;display:inline-block">' + day.toUpperCase() + '</div>';
+      dayCls.forEach(c => {
+        const absents = getAbsents(c.id);
+        html += '<div style="background:rgba(255,255,255,0.75);border:1px solid rgba(200,180,180,0.2);border-radius:0 12px 12px 12px;margin-bottom:8px">';
+        html += '<div style="display:flex;align-items:center;padding:12px 16px;gap:8px">';
+        html += '<span style="font-weight:bold;color:#5a3a4a;flex:1">' + c.time + 'hs <span style="font-size:12px;color:#b09080;font-weight:normal">· ' + c.teacher + '</span></span>';
+        html += '<span style="font-size:12px;color:#9a7080">' + c.enrolled.length + '/' + c.spots + '</span>';
+        html += '<button onclick="this.closest(\'div\').nextElementSibling.style.display=this.closest(\'div\').nextElementSibling.style.display===\'none\'?\'block\':\'none\'" style="background:none;border:none;cursor:pointer;font-size:16px">▼</button>';
+        html += '<button onclick="removeClass(' + c.id + ')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑️</button>';
+        html += '</div>';
+        html += '<div style="display:none;padding:0 16px 14px">';
+        html += '<div style="font-size:11px;color:#9a7080;letter-spacing:1px;margin-bottom:8px">INSCRIPTAS — tocá para agregar/quitar</div>';
+        html += '<div>';
+        students.forEach(name => {
+          const on = c.enrolled.includes(name);
+          const struck = absents.includes(name);
+          html += '<button class="class-tag' + (on?' on':'') + '" onclick="toggleEnroll(' + c.id + ',\'' + name.replace(/'/g, "\\'") + '\')" style="' + (struck?'text-decoration:line-through;opacity:0.5':'') + '">' + (on?'✓ ':'') + name + '</button>';
+        });
+        html += '</div></div></div>';
+      });
+    });
+    return html;
+  }
+
+  function renderAdminAlumnas() {
+    let html = '<div style="font-size:12px;color:#9a7080;letter-spacing:1.5px;margin-bottom:16px;font-weight:bold">👩‍🎓 ALUMNAS (' + students.length + ')</div>';
+    html += '<div style="display:flex;gap:8px;margin-bottom:16px">';
+    html += '<input type="text" id="new-student" placeholder="Nombre de nueva alumna..." style="flex:1;margin-bottom:0" onkeydown="if(event.key===\'Enter\')addStudent()">';
+    html += '<button onclick="addStudent()" style="background:#7aab8a;border:none;color:white;padding:8px 14px;border-radius:10px;font-size:13px;cursor:pointer;font-family:Georgia,serif">+ Agregar</button>';
+    html += '</div>';
+    students.forEach(s => {
+      html += '<div class="row"><span style="flex:1;font-size:14px;color:#5a3a4a">' + s + '</span>';
+      html += '<button onclick="removeStudent(\'' + s.replace(/'/g, "\\'") + '\')" style="background:none;border:none;cursor:pointer;font-size:16px">🗑️</button></div>';
+    });
+    return html;
+  }
+
+  function renderAdminAusencias() {
+    let html = '<div style="font-size:12px;color:#9a7080;letter-spacing:1.5px;margin-bottom:16px;font-weight:bold">🙋 AUSENCIAS AVISADAS</div>';
+    if (!absences.length) html += '<div style="color:#bbb;font-size:14px;text-align:center;padding:32px">No hay ausencias avisadas 🌸</div>';
+    absences.forEach((a, i) => {
+      const cls = classes.find(c => c.id == a.classId);
+      html += '<div class="row" style="margin-bottom:8px"><div style="flex:1"><span style="font-weight:bold;color:#5a3a4a">' + a.studentName + '</span>';
+      html += '<span style="color:#aaa;margin-left:8px;font-size:13px">falta a ' + (cls?cls.day+' '+cls.time+'hs':'clase eliminada') + '</span></div>';
+      html += '<button onclick="removeAbsence(' + i + ')" style="background:none;border:none;color:#e57373;cursor:pointer;font-size:16px">✕</button></div>';
+    });
+    return html;
+  }
+
+  function renderAdminProfes() {
+    const colors = {Anabella:"#d4a5a5",Maia:"#a5b4d4","Rocío":"#a5d4b4",Antonela:"#d4cca5",Iara:"#c4a5d4"};
+    let html = '<div style="font-size:12px;color:#9a7080;letter-spacing:1.5px;margin-bottom:16px;font-weight:bold">👩‍🏫 PROFES Y WHATSAPP</div>';
+    Object.entries(TEACHERS).forEach(([name, phone]) => {
+      html += '<div class="row" style="margin-bottom:10px;border-left:4px solid ' + (colors[name]||'#ccc') + '">';
+      html += '<div style="flex:1"><div style="font-weight:bold;color:#5a3a4a;font-size:15px">' + name + '</div>';
+      html += '<div style="font-size:12px;color:#9a8080;margin-top:2px">+' + phone + '</div></div>';
+      html += '<button onclick="window.open(\'https://wa.me/' + phone + '\',\'_blank\')" style="background:' + (colors[name]||'#ccc') + ';border:none;color:#5a3a4a;padding:8px 14px;border-radius:10px;font-size:13px;cursor:pointer;font-family:Georgia,serif">💬 WhatsApp</button>';
+      html += '</div>';
+    });
+    return html;
+  }
+  </script>
+
+</body>
+</html>
