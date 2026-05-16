@@ -170,7 +170,7 @@ fetch(DB+"/classes.json").then(function(r){return r.json();}).then(function(raw)
   if(raw&&raw.v2)cuotas=raw;
   showApp();
 }).catch(function(e){
-  errApp("Error: "+e.message || "Error de conexi\u00f3n");
+  loadErr("Error: "+e.message || "Error de conexi\u00f3n");
 });
 
 // \u2500\u2500 UI helpers \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
