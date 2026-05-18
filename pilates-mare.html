@@ -111,8 +111,6 @@ function saveP(){sav(true);dbSet("payments",payments).then(function(){sav(false)
 function saveQ(){sav(true);dbSet("cuotas",cuotas).then(function(){sav(false);});}
 
 // ===== INIT =====
-document.getElementById("logo-img").src=LOGO;
-document.getElementById("logo-hdr").src=LOGO;
 
 function step(s){var e=document.getElementById("lstep");if(e)e.textContent=s;}
 function showApp(){document.getElementById("loading").style.display="none";document.getElementById("hdr").style.display="flex";document.getElementById("wrap").style.display="block";render();}
