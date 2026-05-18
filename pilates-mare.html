@@ -218,7 +218,6 @@ function render(){
 // ===== HOME =====
 function rHome(){
   if(!alumnaName){
-    var avail=classes.filter(function(c){return free(c)>0&&absFor(c.id).length>0;});
     var h='<div style="text-align:center;padding:24px 0 16px">';
     h+='<img src="'+LOGO+'" style="width:72px;height:72px;object-fit:contain;margin-bottom:10px"/>';
     h+='<div style="font-size:24px;font-weight:bold;color:#7a4a5a">Pilates Mare</div>';
@@ -228,11 +227,7 @@ function rHome(){
     h+='<button class="bigbtn" style="background:linear-gradient(135deg,#d4a5c0,#c48ab0)" onclick="showAlumnaLogin()"><div style="font-size:26px;margin-bottom:6px">&#128105;&#8205;&#127891;</div><div style="font-size:15px;font-weight:bold;margin-bottom:3px">Ya soy alumna</div><div style="font-size:11px;opacity:0.9">Entr\u00e1 con tu DNI</div></button>';
     h+='<button class="bigbtn" style="background:linear-gradient(135deg,#c8a5d4,#b08ac8)" onclick="showView(\'new\')"><div style="font-size:26px;margin-bottom:6px">&#127800;</div><div style="font-size:15px;font-weight:bold;margin-bottom:3px">Quiero comenzar</div><div style="font-size:11px;opacity:0.9">Anotarme en Pilates</div></button>';
     h+='</div>';
-    if(avail.length){
-      h+='<div class="card" style="border-left:4px solid #d4a5a5;margin-bottom:16px"><div style="font-size:11px;color:#7a5a3a;font-weight:bold;margin-bottom:10px;letter-spacing:1px">&#10024; LUGARES DISPONIBLES AHORA</div>';
-      avail.forEach(function(c){var n=absFor(c.id).length;h+='<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(200,180,160,0.2)"><span><b style="color:'+DAY_COLORS[c.day]+'">'+c.day+'</b> &middot; '+c.time+'hs &middot; '+c.teacher+'</span><span class="badge bg">'+n+' libre'+(n>1?'s':'')+'</span></div>';});
-      h+='</div>';
-    }
+
     return h;
   }
   var isOvd=payStatus(alumnaName)==="overdue";
